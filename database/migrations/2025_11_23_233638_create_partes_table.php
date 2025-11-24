@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('partes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->foreignId('motor_id')->constrained('motors');
+            $table->foreignId('motor_id')->constrained('motores');
             $table->timestamps();
         });
     }
