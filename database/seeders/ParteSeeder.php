@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Parte;
 
 class ParteSeeder extends Seeder
 {
@@ -12,9 +13,16 @@ class ParteSeeder extends Seeder
      */
     public function run(): void
     {
-        $Parte = [
-            'nombre' => 'Biela',
-            'motor_id' => 1,
+        $partes = [
+            ['nombre' => 'Pistón', 'motor_id' => 1],
+            ['nombre' => 'Biela', 'motor_id' => 1],
+            ['nombre' => 'Árbol de levas', 'motor_id' => 2],
+            ['nombre' => 'Válvula de escape', 'motor_id' => 3],
+            ['nombre' => 'Culata', 'motor_id' => 4],
         ];
+
+        foreach ($partes as $parte) {
+            Parte::create($parte);
+        }
     }
 }
