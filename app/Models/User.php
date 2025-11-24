@@ -22,6 +22,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'rol_id',
+        'telefono',
+        'direccion',
+        'tipo',
+
     ];
 
     /**
@@ -49,4 +54,10 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function rol()
+    {
+        return $this->belongsTo(Rol::class);
+    }
+
 }
