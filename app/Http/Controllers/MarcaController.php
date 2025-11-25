@@ -7,10 +7,22 @@ use Illuminate\Http\Request;
 
 class MarcaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $marcas = Marca::orderBy('id', 'desc')->get();
-        return inertia('Marcas/Index', compact('marcas'));
+        return inertia('Marcas/Index', [
+            'marcas' => Marca::query()
+            ->when(
+                $request->busqueda,
+                function ($query) use ($request) {
+                $query->whereRaw('LOWER(nombre) like LOWER(?)', ['%' . $request->busqueda . '%']);
+                }
+            )
+            ->orderBy('id', 'desc')
+            ->paginate(5)
+            ->withQueryString(),
+
+            'terminosBusqueda' => $request->busqueda
+        ]);
     }
 
     public function create()
@@ -47,6 +59,11 @@ class MarcaController extends Controller
 
     public function destroy(Marca $marca)
     {
+        
+        if ($marca->motores()->count() > 0) {
+            return redirect()->route('marcas.index')->with('error', 'No se puede eliminar la marca porque tiene motores asociados.');
+        }
+
         $marca->delete();
 
         return redirect()->route('marcas.index')->with('success', 'Marca eliminada correctamente.');

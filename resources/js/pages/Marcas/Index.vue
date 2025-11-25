@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { index as marcasIndex, create, destroy } from '@/routes/marcas';
-import { dashboard } from '@/routes';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
+import PaginationLinks from '@/components/global/PaginationLinks.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Pencil, Trash2 } from 'lucide-vue-next';
-
-interface Marca {
-    id: number;
-    nombre: string;
-    created_at: string;
-    updated_at: string;
-}
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import Input from '@/components/ui/input/Input.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { dashboard } from '@/routes';
+import { create, destroy, index as marcasIndex } from '@/routes/marcas';
+import { Marca, Paginacion, type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { debounce } from 'lodash';
+import { Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
-    marcas: Marca[];
+    marcas: Paginacion<Marca>;
+    terminosBusqueda?: string;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const marcas = computed(() => props.marcas.data);
+const metadatos = computed(() => props.marcas);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,6 +43,19 @@ const deleteMarca = (marca: Marca) => {
         router.delete(destroy(marca.id).url);
     }
 };
+
+const buscar = ref(props.terminosBusqueda);
+watch(
+    buscar,
+    debounce(
+        (query) =>
+            router.get('/marcas', { busqueda: query }, { preserveState: true }),
+        500,
+    ),
+);
+
+// const page = usePage<SharedData>();
+// console.log(page);
 </script>
 
 <template>
@@ -51,6 +70,17 @@ const deleteMarca = (marca: Marca) => {
                         <CardDescription>
                             Administre las marcas del motor
                         </CardDescription>
+                        <br>
+                        <div class="flex w-full space-x-2">
+                            <Search />
+                            <Input
+                                ref="inputRef"
+                                type="search"
+                                class="max-w-sm"
+                                placeholder="Buscar..."
+                                v-model="buscar"
+                            />
+                        </div>
                     </div>
                     <Link :href="create().url">
                         <Button>
@@ -60,27 +90,36 @@ const deleteMarca = (marca: Marca) => {
                     </Link>
                 </CardHeader>
                 <CardContent>
-                    <div v-if="marcas.length === 0" class="py-8 text-center text-muted-foreground">
+                    <div
+                        v-if="metadatos.data.length === 0"
+                        class="py-8 text-center text-muted-foreground"
+                    >
                         No hay marcas registradas
                     </div>
                     <div v-else class="rounded-md border">
                         <table class="w-full">
                             <thead>
                                 <tr class="border-b bg-muted/50">
-                                    <th class="h-12 px-4 text-left align-middle font-medium">
+                                    <th
+                                        class="h-12 px-4 text-left align-middle font-medium"
+                                    >
                                         ID
                                     </th>
-                                    <th class="h-12 px-4 text-left align-middle font-medium">
+                                    <th
+                                        class="h-12 px-4 text-left align-middle font-medium"
+                                    >
                                         Nombre
                                     </th>
-                                    <th class="h-12 px-4 text-right align-middle font-medium">
+                                    <th
+                                        class="h-12 px-4 text-right align-middle font-medium"
+                                    >
                                         Acciones
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr 
-                                    v-for="marca in marcas" 
+                                <tr
+                                    v-for="marca in marcas"
                                     :key="marca.id"
                                     class="border-b transition-colors hover:bg-muted/50"
                                 >
@@ -90,15 +129,20 @@ const deleteMarca = (marca: Marca) => {
                                     <td class="p-4 align-middle">
                                         {{ marca.nombre }}
                                     </td>
-                                    <td class="p-4 align-middle text-right">
+                                    <td class="p-4 text-right align-middle">
                                         <div class="flex justify-end gap-2">
-                                            <Link :href="`/marcas/${marca.id}/edit`">
-                                                <Button variant="outline" size="sm">
+                                            <Link
+                                                :href="`/marcas/${marca.id}/edit`"
+                                            >
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                >
                                                     <Pencil class="h-4 w-4" />
                                                 </Button>
                                             </Link>
-                                            <Button 
-                                                variant="destructive" 
+                                            <Button
+                                                variant="destructive"
                                                 size="sm"
                                                 @click="deleteMarca(marca)"
                                             >
@@ -112,6 +156,7 @@ const deleteMarca = (marca: Marca) => {
                     </div>
                 </CardContent>
             </Card>
+            <PaginationLinks :paginator="metadatos" />
         </div>
     </AppLayout>
 </template>
