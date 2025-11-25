@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid } from 'lucide-vue-next';
+import { Car, Cpu, LayoutGrid, User } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -26,18 +26,18 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Usuarios',
         href: '/usuarios',
-        icon: LayoutGrid,
+        icon: User,
     },
     {
         title: 'Motores',
         href: '/motores',
-        icon: LayoutGrid,
+        icon: Cpu,
     },
 
     {
         title: 'Marcas',
         href: '/marcas',
-        icon: LayoutGrid,
+        icon: Car,
     },
 ];
 

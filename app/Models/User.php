@@ -25,7 +25,7 @@ class User extends Authenticatable
         'rol_id',
         'telefono',
         'direccion',
-        'tipo',
+        // 'tipo',
 
     ];
 

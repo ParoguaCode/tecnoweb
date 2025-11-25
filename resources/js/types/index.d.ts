@@ -70,15 +70,32 @@ export interface Paginacion<T> {
     total:          number;
 }
 
-interface Marca {
+export interface Marca {
     id: number;
     nombre: string;
     created_at: string;
     updated_at: string;
 }
 
+export interface Rol {
+    id: number;
+    nombre: string;
+    descripcion?: string;
+    created_at: string;
+    updated_at: string;
+}
 
-
-
+export interface Usuario {
+    id: number;
+    name: string;
+    email: string;
+    telefono?: number;
+    direccion?: string;
+    // tipo: string;
+    rol_id: number;
+    rol?: Rol;
+    created_at: string;
+    updated_at: string;
+}
 
 export type BreadcrumbItemType = BreadcrumbItem;
