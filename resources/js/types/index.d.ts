@@ -1,3 +1,4 @@
+import type { PageProps } from '@inertiajs/core';
 import { InertiaLinkProps } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
 
@@ -35,5 +36,49 @@ export interface User {
     created_at: string;
     updated_at: string;
 }
+
+export interface SharedData extends PageProps {
+    name: string;
+    quote: { message: string; author: string };
+    auth: {
+        user: User;
+        permisos: string[];
+    }
+    ziggy: Config & { location: string };
+    flash: {
+        success: string | null;
+        error: string | null;
+        // warning: string | null;
+        // info: string | null;
+        // message: string | null;
+    };
+}
+
+export interface Paginacion<T> {
+    current_page:   number;
+    data:           T[];
+    first_page_url: string;
+    from:           number;
+    last_page:      number;
+    last_page_url:  string;
+    links:          Link[];
+    next_page_url:  string;
+    path:           string;
+    per_page:       number;
+    prev_page_url:  null;
+    to:             number;
+    total:          number;
+}
+
+interface Marca {
+    id: number;
+    nombre: string;
+    created_at: string;
+    updated_at: string;
+}
+
+
+
+
 
 export type BreadcrumbItemType = BreadcrumbItem;
