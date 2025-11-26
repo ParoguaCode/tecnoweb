@@ -39,6 +39,11 @@ const mainNavItems: NavItem[] = [
         href: '/marcas',
         icon: Car,
     },
+    {
+        title: 'Modelos',
+        href: '/modelos',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
