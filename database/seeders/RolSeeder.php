@@ -78,6 +78,23 @@ class RolSeeder extends Seeder
             'descripcion' => 'Eliminar usuarios',
         ])->roles()->attach([$propietario->id]);
 
+        //Clientes
+        Permiso::create([
+            'nombre' => 'cliente.listar',
+            'descripcion' => 'Listar clientes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);
+        Permiso::create([
+            'nombre' => 'cliente.crear',
+            'descripcion' => 'Crear clientes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);
+        Permiso::create([
+            'nombre' => 'cliente.editar',
+            'descripcion' => 'Editar clientes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);
+        Permiso::create([
+            'nombre' => 'cliente.eliminar',
+            'descripcion' => 'Eliminar clientes',
+        ])->roles()->attach([$propietario->id]);    
 
         
 

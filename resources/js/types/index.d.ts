@@ -77,6 +77,14 @@ export interface Marca {
     updated_at: string;
 }
 
+export interface Cliente {
+    id: number;
+    nombre: string;
+    telefono: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface Rol {
     id: number;
     nombre: string;
