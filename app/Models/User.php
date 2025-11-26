@@ -60,4 +60,15 @@ class User extends Authenticatable
         return $this->belongsTo(Rol::class);
     }
 
+    public function tienePermiso(string $permiso): bool
+    {
+        return $this->rol->permisos->contains('nombre', $permiso);
+    }
+
+    public function obtenerPermisos(): array
+    {
+        return $this->rol->permisos->pluck('nombre')->toArray();
+    }
+    
+
 }

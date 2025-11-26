@@ -31,6 +31,8 @@ watch(
     { immediate: true, deep: true },
 );
 
+console.log(page.props.auth.permisos);
+
 </script>
 
 <template>

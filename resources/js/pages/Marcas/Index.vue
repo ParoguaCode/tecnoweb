@@ -9,6 +9,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import Input from '@/components/ui/input/Input.vue';
+import { puede } from '@/helpers/validarPermiso';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { create, destroy, index as marcasIndex } from '@/routes/marcas';
@@ -17,6 +18,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import { Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
+
 
 interface Props {
     marcas: Paginacion<Marca>;
@@ -82,12 +84,17 @@ watch(
                             />
                         </div>
                     </div>
-                    <Link :href="create().url">
-                        <Button>
-                            <Plus class="mr-2 h-4 w-4" />
-                            Nueva Marca
-                        </Button>
-                    </Link>
+                    <div>
+                        
+                    </div>
+                    <div v-if="puede('marca.crear')">
+                        <Link :href="create().url">
+                            <Button>
+                                <Plus class="mr-2 h-4 w-4" />
+                                Nueva Marca
+                            </Button>
+                        </Link>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <div
@@ -110,7 +117,7 @@ watch(
                                     >
                                         Nombre
                                     </th>
-                                    <th
+                                    <th v-if="puede('marca.crear')"
                                         class="h-12 px-4 text-right align-middle font-medium"
                                     >
                                         Acciones
@@ -129,7 +136,7 @@ watch(
                                     <td class="p-4 align-middle">
                                         {{ marca.nombre }}
                                     </td>
-                                    <td class="p-4 text-right align-middle">
+                                    <td v-if="puede('marca.crear')" class="p-4 text-right align-middle">
                                         <div class="flex justify-end gap-2">
                                             <Link
                                                 :href="`/marcas/${marca.id}/edit`"
