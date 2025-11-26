@@ -18,8 +18,8 @@ class RolSeeder extends Seeder
         //MARCAS OK
         Permiso::create([
             'nombre' => 'marca.listar',
-            'descripcion' => 'Crear marcas',
-        ])->roles()->attach([$propietario->id, $mecanico->id]);
+            'descripcion' => 'Ver lista de marcas',
+        ])->roles()->attach([$propietario->id]);
 
         Permiso::create([
             'nombre' => 'marca.crear',

@@ -12,10 +12,11 @@ import Input from '@/components/ui/input/Input.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { create, destroy, index as usuariosIndex } from '@/routes/usuarios';
+import { index as permisosIndex } from '@/routes/permisos';
 import { Paginacion, Usuario, type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
-import { Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
+import { Pencil, Plus, Search, Settings, Trash2 } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 
 interface Props {
@@ -83,12 +84,20 @@ watch(
                             />
                         </div>
                     </div>
-                    <Link :href="create().url">
-                        <Button>
-                            <Plus class="mr-2 h-4 w-4" />
-                            Nuevo Usuario
-                        </Button>
-                    </Link>
+                    <div class="flex flex-col gap-2">
+                        <Link :href="create().url">
+                            <Button>
+                                <Plus class="mr-2 h-4 w-4" />
+                                Nuevo Usuario
+                            </Button>
+                        </Link>
+                        <Link :href="permisosIndex().url">
+                            <Button>
+                                <Settings class="mr-2 h-4 w-4" />
+                                Administrar Permisos
+                            </Button>
+                        </Link>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <div
