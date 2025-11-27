@@ -31,3 +31,4 @@ class Factura extends Model
         return $this->belongsTo(Pago::class);
     }
 }
+

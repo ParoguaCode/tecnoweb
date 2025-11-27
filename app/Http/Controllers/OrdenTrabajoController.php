@@ -130,6 +130,7 @@ class OrdenTrabajoController extends Controller
                $q->withPivot(['cantidad', 'precio', 'subtotal']);
             },
            'incidencias',
+           'planPago',
         ]);
 
          $serviciosCatalogo = Servicio::select('id', 'nombre', 'costo')
