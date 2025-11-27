@@ -9,25 +9,24 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import Input from '@/components/ui/input/Input.vue';
-import { puede } from '@/helpers/validarPermiso';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import { create, destroy, index as marcasIndex } from '@/routes/marcas';
-import { Marca, Paginacion, type BreadcrumbItem } from '@/types';
+import { create, destroy, index as usuariosIndex } from '@/routes/usuarios';
+import { index as permisosIndex } from '@/routes/permisos';
+import { Paginacion, Usuario, type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
-import { Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
+import { Pencil, Plus, Search, Settings, Trash2 } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 
-
 interface Props {
-    marcas: Paginacion<Marca>;
+    usuarios: Paginacion<Usuario>;
     terminosBusqueda?: string;
 }
 
 const props = defineProps<Props>();
-const marcas = computed(() => props.marcas.data);
-const metadatos = computed(() => props.marcas);
+const usuarios = computed(() => props.usuarios.data);
+const metadatos = computed(() => props.usuarios);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -35,14 +34,14 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: dashboard().url,
     },
     {
-        title: 'Marcas',
-        href: marcasIndex().url,
+        title: 'Usuarios',
+        href: usuariosIndex().url,
     },
 ];
 
-const deleteMarca = (marca: Marca) => {
-    if (confirm(`¿Está seguro de eliminar la marca "${marca.nombre}"?`)) {
-        router.delete(destroy(marca.id).url);
+const deleteUsuario = (usuario: Usuario) => {
+    if (confirm(`¿Está seguro de eliminar el usuario "${usuario.name}"?`)) {
+        router.delete(destroy(usuario.id).url);
     }
 };
 
@@ -51,47 +50,51 @@ watch(
     buscar,
     debounce(
         (query) =>
-            router.get('/marcas', { busqueda: query }, { preserveState: true }),
+            router.get(
+                '/usuarios',
+                { busqueda: query },
+                { preserveState: true },
+            ),
         500,
     ),
 );
-
-// const page = usePage<SharedData>();
-// console.log(page);
 </script>
 
 <template>
-    <Head title="Marcas" />
+    <Head title="Usuarios" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
             <Card>
                 <CardHeader class="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle>Gestión de Marcas</CardTitle>
+                        <CardTitle>Gestión de Usuarios</CardTitle>
                         <CardDescription>
-                            Administre las marcas del motor
+                            Administre los usuarios del sistema
                         </CardDescription>
-                        <br>
+                        <br />
                         <div class="flex w-full space-x-2">
                             <Search />
                             <Input
                                 ref="inputRef"
                                 type="search"
                                 class="max-w-sm"
-                                placeholder="Buscar..."
+                                placeholder="Buscar por nombre, email o rol..."
                                 v-model="buscar"
                             />
                         </div>
                     </div>
-                    <div>
-                        
-                    </div>
-                    <div v-if="puede('marca.crear')">
+                    <div class="flex flex-col gap-2">
                         <Link :href="create().url">
                             <Button>
                                 <Plus class="mr-2 h-4 w-4" />
-                                Nueva Marca
+                                Nuevo Usuario
+                            </Button>
+                        </Link>
+                        <Link :href="permisosIndex().url">
+                            <Button>
+                                <Settings class="mr-2 h-4 w-4" />
+                                Administrar Permisos
                             </Button>
                         </Link>
                     </div>
@@ -101,45 +104,57 @@ watch(
                         v-if="metadatos.data.length === 0"
                         class="py-8 text-center text-muted-foreground"
                     >
-                        No hay marcas registradas
+                        No hay usuarios registrados
                     </div>
                     <div v-else class="rounded-md border">
                         <table class="w-full">
                             <thead>
                                 <tr class="border-b bg-muted/50">
-                                    <th
-                                        class="h-12 px-4 text-left align-middle font-medium"
-                                    >
+                                    <th class="h-12 px-4 text-left align-middle font-medium">
                                         ID
                                     </th>
-                                    <th
-                                        class="h-12 px-4 text-left align-middle font-medium"
-                                    >
+                                    <th class="h-12 px-4 text-left align-middle font-medium">
                                         Nombre
                                     </th>
-                                    <th v-if="puede('marca.crear')"
-                                        class="h-12 px-4 text-right align-middle font-medium"
-                                    >
+                                    <th class="h-12 px-4 text-left align-middle font-medium">
+                                        Email
+                                    </th>
+                                    <th class="h-12 px-4 text-left align-middle font-medium">
+                                        Rol
+                                    </th>
+                                    <!-- <th class="h-12 px-4 text-left align-middle font-medium">
+                                        Tipo
+                                    </th> -->
+                                    <th class="h-12 px-4 text-right align-middle font-medium">
                                         Acciones
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="marca in marcas"
-                                    :key="marca.id"
+                                    v-for="usuario in usuarios"
+                                    :key="usuario.id"
                                     class="border-b transition-colors hover:bg-muted/50"
                                 >
                                     <td class="p-4 align-middle">
-                                        {{ marca.id }}
+                                        {{ usuario.id }}
                                     </td>
                                     <td class="p-4 align-middle">
-                                        {{ marca.nombre }}
+                                        {{ usuario.name }}
                                     </td>
-                                    <td v-if="puede('marca.crear')" class="p-4 text-right align-middle">
+                                    <td class="p-4 align-middle">
+                                        {{ usuario.email }}
+                                    </td>
+                                    <td class="p-4 align-middle">
+                                        {{ usuario.rol?.nombre || '-' }}
+                                    </td>
+                                    <!-- <td class="p-4 align-middle">
+                                        {{ usuario.tipo }}
+                                    </td> -->
+                                    <td class="p-4 text-right align-middle">
                                         <div class="flex justify-end gap-2">
                                             <Link
-                                                :href="`/marcas/${marca.id}/edit`"
+                                                :href="`/usuarios/${usuario.id}/edit`"
                                             >
                                                 <Button
                                                     variant="outline"
@@ -151,7 +166,7 @@ watch(
                                             <Button
                                                 variant="destructive"
                                                 size="sm"
-                                                @click="deleteMarca(marca)"
+                                                @click="deleteUsuario(usuario)"
                                             >
                                                 <Trash2 class="h-4 w-4" />
                                             </Button>

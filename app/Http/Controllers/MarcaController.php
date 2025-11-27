@@ -3,18 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marca;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class MarcaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $marcas = Marca::orderBy('id', 'desc')->get();
-        return inertia('Marcas/Index', compact('marcas'));
+
+        if (!request()->user()->tienePermiso('marca.listar')) {
+            return redirect()->route('dashboard')->with('error', 'No tenés permiso para listar marcas.');
+        }
+
+        return inertia('Marcas/Index', [
+            'marcas' => Marca::query()
+            ->when(
+                $request->busqueda,
+                function ($query) use ($request) {
+                $query->whereRaw('LOWER(nombre) like LOWER(?)', ['%' . $request->busqueda . '%']);
+                }
+            )
+            ->orderBy('id', 'desc')
+            ->paginate(5)
+            ->withQueryString(),
+
+            'terminosBusqueda' => $request->busqueda
+        ]);
     }
 
     public function create()
     {
+        if (!request()->user()->tienePermiso('marca.crear')) {
+            return redirect()->route('dashboard')->with('error', 'No tenés permiso para listar marcas.');
+        }
+
         return inertia('Marcas/Create');
     }
 
@@ -31,6 +53,10 @@ class MarcaController extends Controller
 
     public function edit(Marca $marca)
     {
+        if (!request()->user()->tienePermiso('marca.editar')) {
+            return redirect()->route('dashboard')->with('error', 'No tenés permiso para editar marcas.');
+        }
+    
         return inertia('Marcas/Edit', compact('marca'));
     }
 
@@ -47,6 +73,11 @@ class MarcaController extends Controller
 
     public function destroy(Marca $marca)
     {
+        
+        if ($marca->motores()->count() > 0) {
+            return redirect()->route('marcas.index')->with('error', 'No se puede eliminar la marca porque tiene motores asociados.');
+        }
+
         $marca->delete();
 
         return redirect()->route('marcas.index')->with('success', 'Marca eliminada correctamente.');

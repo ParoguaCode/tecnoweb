@@ -2,24 +2,86 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permiso;
 use App\Models\Rol;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RolSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $roles = [
-            ['nombre' => 'Propietario'],
-            ['nombre' => 'Mecanico'],
-        ];
 
-        foreach ($roles as $rol) {
-            Rol::create($rol);
-        }
+        $propietario = Rol::create(['nombre' => 'Propietario']);
+        $mecanico = Rol::create(['nombre' => 'Mecanico']);
+
+        //MARCAS OK
+        Permiso::create([
+            'nombre' => 'marca.listar',
+            'descripcion' => 'Ver lista de marcas',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'marca.crear',
+            'descripcion' => 'Crear marcas',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'marca.editar',
+            'descripcion' => 'Editar marcas',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'marca.eliminar',
+            'descripcion' => 'Eliminar marcas',
+        ])->roles()->attach([$propietario->id]);
+
+        //MODELOS
+        Permiso::create([
+            'nombre' => 'modelo.listar',
+            'descripcion' => 'Listar modelos',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'modelo.crear',
+            'descripcion' => 'Crear modelos',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'modelo.editar',
+            'descripcion' => 'Editar modelos',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'modelo.eliminar',
+            'descripcion' => 'Eliminar modelos',
+        ])->roles()->attach([$propietario->id]);
+
+        //USUARIOS
+        Permiso::create([
+            'nombre' => 'usuario.listar',
+            'descripcion' => 'Listar usuarios',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'usuario.crear',
+            'descripcion' => 'Crear usuarios',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'usuario.editar',
+            'descripcion' => 'Editar usuarios',
+        ])->roles()->attach([$propietario->id]);
+
+        Permiso::create([
+            'nombre' => 'usuario.eliminar',
+            'descripcion' => 'Eliminar usuarios',
+        ])->roles()->attach([$propietario->id]);
+
+
+        
+
+
+
     }
 }

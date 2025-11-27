@@ -21,5 +21,14 @@ class UserSeeder extends Seeder
         ];
 
         User::create($usuario1);
+
+        $usuario2 = [
+            'name' => 'Mecanico Ejemplo',
+            'email' => 'mecanico@example.com',
+            'password' => bcrypt('00000000'),
+            'rol_id' => 2,
+        ];
+
+        User::create($usuario2);
     }
 }

@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { Car, Cpu, LayoutGrid, User } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -26,18 +26,18 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Usuarios',
         href: '/usuarios',
-        icon: LayoutGrid,
+        icon: User,
     },
     {
         title: 'Motores',
         href: '/motores',
-        icon: LayoutGrid,
+        icon: Cpu,
     },
 
     {
         title: 'Marcas',
         href: '/marcas',
-        icon: LayoutGrid,
+        icon: Car,
     },
     {
         title: 'Modelos',
@@ -47,16 +47,16 @@ const mainNavItems: NavItem[] = [
 ];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
+    // {
+    //     title: 'Github Repo',
+    //     href: 'https://github.com/laravel/vue-starter-kit',
+    //     icon: Folder,
+    // },
+    // {
+    //     title: 'Documentation',
+    //     href: 'https://laravel.com/docs/starter-kits#vue',
+    //     icon: BookOpen,
+    // },
 ];
 </script>
 
