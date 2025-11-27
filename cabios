@@ -1,0 +1,21 @@
+Archivos modificados en los últimos cambios:
+
+1) resources/js/pages/OrdenTrabajo/Show.vue
+   - Implementación de interfaz tipo "carrito" para añadir servicios uno por uno
+   - Eliminado el botón duplicado "Guardar todos" en el formulario
+   - Añadida la vista previa del carrito con scroll (max-height) y botón "Guardar todos"
+   - Limpieza de handlers y sincronización Inertia para recarga tras guardar
+
+2) app/Http/Controllers/OrdenTrabajoServicioController.php
+   - Modificado método store() para aceptar payloads en lote:
+       * 'servicios' => [{servicio_id, cantidad, precio}, ...] (recomendado)
+       * compatibilidad con 'servicio_ids' + 'cantidad'[, 'precio'] y 'servicio_id' single
+   - Normaliza y procesa cada item (crea o actualiza filas existentes y recalcula total)
+
+3) tests/Feature/OrdenTrabajoServicioBatchTest.php
+   - Nuevo conjunto de pruebas para validar la funcionalidad en lote:
+       * envio de varios servicios mediante 'servicio_ids' + cantidad
+       * envio de array 'servicios' con cantidad y precio por item
+   - Las pruebas locales pasan correctamente
+
+Nota: Todos estos cambios están solo en tu copia local (no se ha realizado push).

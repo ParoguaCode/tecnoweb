@@ -14,7 +14,7 @@ import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Plus, AlertTriangle, ArrowLeft, Pencil, Trash2 } from 'lucide-vue-next';
-import { computed, watch } from 'vue';
+import { computed, watch, ref } from 'vue';
 
 interface ServicioPivot {
     id: number;
@@ -81,15 +81,22 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // ==============================
-//   Formulario "Agregar Servicio"
+//   Carrito: añadir filas (servicio + cantidad + precio) y enviar en lote
 // ==============================
 const formServicio = useForm({
-    servicio_id: '',
+    servicio_id: '' as number | string,
     cantidad: 1,
-    precio: '',
+    precio: '' as string | number,
     costo_sugerido: '' as string | number,
 });
 
+// carrito local: items que se agregarán en lote
+const carrito = ref<Array<{servicio_id:number, nombre:string, cantidad:number, precio:number, subtotal:number}>>([]);
+
+const formBatch = useForm({ servicios: [] });
+
+// cuando seleccionas un servicio, sugerimos el costo
+// When selection changes: update suggested cost
 // cuando seleccionas un servicio, sugerimos el costo
 watch(
     () => formServicio.servicio_id,
@@ -112,13 +119,60 @@ const subtotalCalculado = computed(() => {
     return cantidad * precio;
 });
 
-const enviarServicio = () => {
-    formServicio.post(`/orden-trabajos/${props.orden.id}/servicios`, {
+const carritoTotal = computed(() => {
+    return carrito.value.reduce((sum, item) => sum + Number(item.subtotal || 0), 0);
+});
+
+const agregarAlCarrito = () => {
+    if (!formServicio.servicio_id) return alert('Seleccione un servicio');
+    if (!formServicio.cantidad || Number(formServicio.cantidad) < 1) return alert('Cantidad inválida');
+
+    const serv = props.serviciosCatalogo.find(s => s.id === Number(formServicio.servicio_id));
+    const nombre = serv ? serv.nombre : 'Servicio desconocido';
+
+    const cantidad = Number(formServicio.cantidad) || 1;
+    const precio = formServicio.precio !== '' && formServicio.precio !== null ? Number(formServicio.precio) : (serv?.costo ?? 0);
+    const subtotal = cantidad * precio;
+
+    carrito.value.push({ servicio_id: Number(formServicio.servicio_id), nombre, cantidad, precio, subtotal });
+
+    // limpiar campos para añadir otro
+    formServicio.servicio_id = '';
+    formServicio.cantidad = 1;
+    formServicio.precio = '';
+    formServicio.costo_sugerido = '';
+};
+
+const removerDelCarrito = (index: number) => {
+    carrito.value.splice(index, 1);
+};
+
+const guardarTodos = () => {
+    if (carrito.value.length === 0) return alert('No hay servicios en la lista');
+
+    // Preparar payload con estructura {servicio_id,cantidad,precio}
+    const payload = carrito.value.map(i => ({ servicio_id: i.servicio_id, cantidad: i.cantidad, precio: i.precio }));
+
+    // assign payload to the form data and submit (useForm will send formBatch data)
+    formBatch.servicios = payload;
+
+    formBatch.post(`/orden-trabajos/${props.orden.id}/servicios`, {
+        preserveState: false,
+        onStart: () => formBatch.processing = true,
         onSuccess: () => {
-            formServicio.reset('servicio_id', 'cantidad', 'precio', 'costo_sugerido');
+            // clear UI state and refresh the page so the server returns updated orden.servicios and total
+            carrito.value = [];
+            formBatch.reset('servicios');
+            // reload current page so Inertia fetches fresh props (including updated total)
+            router.reload();
+        },
+        onError: (err) => {
+            console.warn('Error al guardar lote', err);
         },
     });
 };
+
+// removed single-service submit handler in favor of the itemized carrito + guardarTodos
 
 const confirmDelete = (id: number) => {
     if (!confirm('¿Eliminar esta incidencia? Esta acción no se puede deshacer.')) return;
@@ -244,7 +298,7 @@ const confirmDelete = (id: number) => {
                             Agregar servicio a esta orden
                         </h3>
 
-                        <form @submit.prevent="enviarServicio" class="grid gap-4 md:grid-cols-4 items-end">
+                        <form @submit.prevent class="grid gap-4 md:grid-cols-4 items-end">
                             <!-- Servicio -->
                             <div class="md:col-span-2 flex flex-col gap-1">
                                 <label class="text-sm font-medium">Servicio</label>
@@ -299,13 +353,51 @@ const confirmDelete = (id: number) => {
                                 </span>
 
                                 <Button 
-                                    type="submit"
-                                    :disabled="formServicio.processing || !formServicio.servicio_id"
+                                    type="button"
+                                    :disabled="!formServicio.servicio_id || formServicio.processing"
+                                    @click.prevent="agregarAlCarrito"
                                 >
-                                    {{ formServicio.processing ? 'Agregando…' : 'Agregar Servicio' }}
+                                    Añadir a la lista
                                 </Button>
+
+                                <!-- removed duplicate Guardar todos (kept only in the cart preview) -->
                             </div>
                         </form>
+
+                        <!-- Lista local/preview de servicios para guardar en lote -->
+                        <div v-if="carrito.length > 0" class="mt-4 border rounded p-3 max-h-80 overflow-y-auto">
+                            <h4 class="font-semibold mb-2">Servicios a agregar (lista)</h4>
+                            <table class="w-full border rounded mb-3">
+                                <thead>
+                                    <tr class="bg-muted/50 border-b">
+                                        <th class="text-left p-2">Servicio</th>
+                                        <th class="text-left p-2">Cantidad</th>
+                                        <th class="text-left p-2">Precio</th>
+                                        <th class="text-left p-2">Subtotal</th>
+                                        <th class="text-left p-2">Acciones</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr v-for="(it, idx) in carrito" :key="idx" class="border-b hover:bg-muted/30">
+                                        <td class="p-2">{{ it.nombre }}</td>
+                                        <td class="p-2">{{ it.cantidad }}</td>
+                                        <td class="p-2">{{ it.precio }} Bs</td>
+                                        <td class="p-2 font-semibold">{{ it.subtotal }} Bs</td>
+                                        <td class="p-2 text-right">
+                                            <div class="flex justify-end gap-2">
+                                                <Button size="sm" variant="outline" @click.prevent="removerDelCarrito(idx)">Eliminar</Button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="text-right">
+                                <span class="text-sm mr-4">Total a agregar: <strong>{{ carritoTotal }} Bs</strong></span>
+                                <Button :disabled="formBatch.processing" @click.prevent="guardarTodos">Guardar todos</Button>
+                            </div>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
