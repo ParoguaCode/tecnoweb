@@ -9,15 +9,59 @@ use App\Models\Motor;
 use App\Models\Servicio;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class OrdenTrabajoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = OrdenTrabajo::with(['cliente', 'usuario', 'motor']);
+
+        $busqueda = $request->input('busqueda');
+
+        if ($busqueda) {
+            // normalize search term (remove accents, lower)
+            $search = Str::ascii(Str::lower($busqueda));
+
+            // helper: chain of REPLACE to remove accents from column values
+            $replacements = [
+                'á' => 'a','à' => 'a','ä' => 'a','â' => 'a','ã' => 'a','å' => 'a',
+                'Á' => 'a','À' => 'a','Ä' => 'a','Â' => 'a','Ã' => 'a','Å' => 'a',
+                'é' => 'e','è' => 'e','ë' => 'e','ê' => 'e','É' => 'e','È' => 'e','Ë' => 'e','Ê' => 'e',
+                'í' => 'i','ì' => 'i','ï' => 'i','î' => 'i','Í' => 'i','Ì' => 'i','Ï' => 'i','Î' => 'i',
+                'ó' => 'o','ò' => 'o','ö' => 'o','ô' => 'o','õ' => 'o','Ó' => 'o','Ò' => 'o','Ö' => 'o','Ô' => 'o','Õ' => 'o',
+                'ú' => 'u','ù' => 'u','ü' => 'u','û' => 'u','Ú' => 'u','Ù' => 'u','Ü' => 'u','Û' => 'u',
+                'ñ' => 'n','Ñ' => 'n','ç' => 'c','Ç' => 'c'
+            ];
+
+            $buildExpr = function ($column) use ($replacements) {
+                $expr = $column;
+                foreach ($replacements as $from => $to) {
+                    // each replacement wraps previous expr
+                    $expr = "REPLACE($expr, '$from', '$to')";
+                }
+                return "LOWER($expr)";
+            };
+
+            $clienteExpr = $buildExpr('nombre');
+            $descripcionExpr = $buildExpr('descripcion');
+
+            $query->where(function ($q) use ($search, $clienteExpr, $descripcionExpr) {
+                // search in cliente.nombre (with accent-insensitive normalized comparison)
+                $q->whereHas('cliente', function ($qq) use ($search, $clienteExpr) {
+                    $qq->whereRaw("$clienteExpr LIKE ?", ["%$search%"]);
+                });
+
+                // or search in orden.descripcion
+                $q->orWhereRaw("$descripcionExpr LIKE ?", ["%$search%"]);
+            });
+        }
+
+        $ordenes = $query->orderBy('id', 'desc')->paginate(10);
+
         return Inertia::render('OrdenTrabajo/Index', [
-            'ordenes' => OrdenTrabajo::with(['cliente', 'usuario', 'motor'])
-                ->orderBy('id', 'desc')
-                ->paginate(10)
+            'ordenes' => $ordenes,
+            'terminosBusqueda' => $busqueda,
         ]);
     }
 

@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Dejamos solo un usuario por defecto (propietario)
         $usuario1 = [
             'name' => 'Propietario Ejemplo',
             'email' => 'propietario@example.com',
@@ -20,15 +21,6 @@ class UserSeeder extends Seeder
             'rol_id' => 1,
         ];
 
-        User::create($usuario1);
-
-        $usuario2 = [
-            'name' => 'Mecanico Ejemplo',
-            'email' => 'mecanico@example.com',
-            'password' => bcrypt('00000000'),
-            'rol_id' => 2,
-        ];
-
-        User::create($usuario2);
+        User::firstOrCreate(['email' => $usuario1['email']], $usuario1);
     }
 }

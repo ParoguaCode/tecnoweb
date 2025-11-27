@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             MotorSeeder::class,
             ParteSeeder::class,
             ClienteSeeder::class,
+            ServicioSeeder::class,
+            OrdenTrabajoSeeder::class,
         ]);
     }
 }
