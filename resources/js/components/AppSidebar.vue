@@ -44,6 +44,16 @@ const mainNavItems: NavItem[] = [
         href: '/modelos',
         icon: LayoutGrid,
     },
+    {
+            title: 'Orden de Trabajo',
+            href: '/orden-trabajos',
+            icon: Car,
+        },
+        {
+            title: 'Servicio',
+            href: '/servicios',
+            icon: Car,
+        },
 ];
 
 const footerNavItems: NavItem[] = [
