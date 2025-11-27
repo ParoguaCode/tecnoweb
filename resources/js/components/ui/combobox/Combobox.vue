@@ -3,7 +3,7 @@ import { ref, computed, watch } from "vue";
 import { Check, ChevronsUpDown, Search } from "lucide-vue-next";
 
 const props = defineProps<{
-    items: Array<{ id: number; label: string }>;
+    items: Array<{ id: number | string; label: string }>;
     modelValue: number | string | null;
     placeholder?: string;
 }>()
@@ -31,7 +31,7 @@ const selectItem = (id: number | string) => {
         <!-- INPUT PRINCIPAL -->
         <button
             type="button"
-            class="w-full border rounded px-3 py-2 flex justify-between items-center bg-white"
+            class="w-full rounded-md border border-input bg-background text-foreground px-3 py-2 flex justify-between items-center outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
             @click="open = !open"
         >
             <span class="text-left">
@@ -44,15 +44,15 @@ const selectItem = (id: number | string) => {
         <!-- LISTA -->
         <div
             v-if="open"
-            class="absolute mt-1 w-full bg-white border rounded shadow z-50 max-h-48 overflow-auto"
+            class="absolute mt-1 w-full rounded-md border border-input bg-background text-foreground shadow-md z-50 max-h-48 overflow-auto"
         >
             <!-- BUSCADOR -->
-            <div class="flex items-center gap-2 p-2 border-b bg-gray-50">
+            <div class="flex items-center gap-2 p-2 border-b border-input bg-muted">
                 <Search class="h-4 w-4 opacity-60" />
                 <input
                     type="text"
                     v-model="search"
-                    class="w-full outline-none text-sm bg-transparent"
+                    class="w-full outline-none text-sm bg-transparent text-foreground placeholder:text-muted-foreground"
                     placeholder="Buscar..."
                 />
             </div>
@@ -61,7 +61,7 @@ const selectItem = (id: number | string) => {
             <div 
                 v-for="item in filteredItems" 
                 :key="item.id"
-                class="px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-gray-100"
+                class="px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-accent hover:text-accent-foreground"
                 @click="selectItem(item.id)"
             >
                 <span>{{ item.label }}</span>
@@ -72,7 +72,7 @@ const selectItem = (id: number | string) => {
                 />
             </div>
 
-            <div v-if="filteredItems.length === 0" class="p-3 text-sm text-gray-500">
+            <div v-if="filteredItems.length === 0" class="p-3 text-sm text-muted-foreground">
                 No hay resultados.
             </div>
         </div>

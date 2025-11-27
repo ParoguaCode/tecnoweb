@@ -66,6 +66,11 @@ class OrdenTrabajo extends Model
                 ->withTimestamps();
     }
 
+    public function planPago()
+    {
+        return $this->hasOne(PlanPago::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Helpers de estado

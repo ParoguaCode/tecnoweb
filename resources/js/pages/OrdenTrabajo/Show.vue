@@ -4,11 +4,12 @@ import {
     index as ordenIndex,
     show as ordenShow,
 } from '@/routes/orden-trabajos';
+import { create as planCreate } from '@/routes/plan-pagos';
 
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -32,6 +33,18 @@ interface Incidencia {
     estado: string;
 }
 
+interface PlanPago {
+    id: number;
+    estado: string;
+    fechainicio: string;
+    fechafin: string | null;
+    montoporcuota: number;
+    montototal: number;
+    numerocuotas: number;
+    observacion: string | null;
+    orden_trabajo_id: number;
+}
+
 interface OrdenTrabajo {
     id: number;
     descripcion: string;
@@ -44,6 +57,7 @@ interface OrdenTrabajo {
     motor: { numero_serie: string };
     servicios: ServicioPivot[];
     incidencias: Incidencia[];
+    plan_pago?: PlanPago | null;
 }
 
 interface ServicioCatalogo {
@@ -141,6 +155,21 @@ const confirmDelete = (id: number) => {
                     <CardDescription>
                         Información general de la orden
                     </CardDescription>
+                    <div class="mt-2">
+                        <template v-if="!orden.plan_pago">
+                            <Link :href="planCreate({ ordenTrabajo: orden.id }).url">
+                                <Button size="sm">
+                                    Generar Plan de Pago
+                                </Button>
+                            </Link>
+                        </template>
+                        <template v-else>
+                            <span class="text-sm text-muted-foreground">Esta orden ya tiene Plan de Pago</span>
+                            <Link :href="`/plan-pagos/${orden.plan_pago.id}`" class="ml-2">
+                                <Button variant="outline" size="sm">Ver Plan</Button>
+                            </Link>
+                        </template>
+                    </div>
                 </CardHeader>
                 <CardContent class="space-y-3">
                     <p><strong>Descripción:</strong> {{ orden.descripcion }}</p>
