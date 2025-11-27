@@ -78,10 +78,58 @@ class RolSeeder extends Seeder
             'descripcion' => 'Eliminar usuarios',
         ])->roles()->attach([$propietario->id]);
 
+        //Clientes
+        Permiso::create([
+            'nombre' => 'cliente.listar',
+            'descripcion' => 'Listar clientes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);
+        Permiso::create([
+            'nombre' => 'cliente.crear',
+            'descripcion' => 'Crear clientes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);
+        Permiso::create([
+            'nombre' => 'cliente.editar',
+            'descripcion' => 'Editar clientes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);
+        Permiso::create([
+            'nombre' => 'cliente.eliminar',
+            'descripcion' => 'Eliminar clientes',
+        ])->roles()->attach([$propietario->id]);    
 
-        
+        //Motores
+        Permiso::create([
+            'nombre' => 'motor.listar',
+            'descripcion' => 'Listar motores',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);
+        Permiso::create([
+            'nombre' => 'motor.crear',
+            'descripcion' => 'Crear motores',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);     
+        Permiso::create([
+            'nombre' => 'motor.editar',
+            'descripcion' => 'Editar motores',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);     
+        Permiso::create([
+            'nombre' => 'motor.eliminar',
+            'descripcion' => 'Eliminar motores',
+        ])->roles()->attach([$propietario->id]);    
 
-
-
+        //Partes
+        Permiso::create([
+            'nombre' => 'parte.listar',
+            'descripcion' => 'Listar partes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);
+        Permiso::create([
+            'nombre' => 'parte.crear',
+            'descripcion' => 'Crear partes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);     
+        Permiso::create([
+            'nombre' => 'parte.editar',
+            'descripcion' => 'Editar partes',
+        ])->roles()->attach([$propietario->id, $mecanico->id]);     
+        Permiso::create([
+            'nombre' => 'parte.eliminar',
+            'descripcion' => 'Eliminar partes',
+        ])->roles()->attach([$propietario->id]);    
     }
 }

@@ -29,11 +29,21 @@ const mainNavItems: NavItem[] = [
         icon: User,
     },
     {
+        title: 'Clientes',
+        href: '/clientes',
+        icon: User,
+    },
+    {
         title: 'Motores',
         href: '/motores',
         icon: Cpu,
     },
 
+    {
+        title: 'Partes',
+        href: '/partes',
+        icon: Cpu,
+    },
     {
         title: 'Marcas',
         href: '/marcas',
