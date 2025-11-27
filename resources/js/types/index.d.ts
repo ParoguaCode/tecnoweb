@@ -77,6 +77,26 @@ export interface Marca {
     updated_at: string;
 }
 
+export interface Modelo {
+    id: number;
+    nombre: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Motor {
+    id: number;
+    numero_serie: string;
+    anio: number;
+    descripcion?: string;
+    marca_id: number;
+    modelo_id: number;
+    marca?: Marca;
+    modelo?: Modelo;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface Cliente {
     id: number;
     nombre: string;

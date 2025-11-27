@@ -40,6 +40,11 @@ const mainNavItems: NavItem[] = [
     },
 
     {
+        title: 'Partes',
+        href: '/partes',
+        icon: Cpu,
+    },
+    {
         title: 'Marcas',
         href: '/marcas',
         icon: Car,
