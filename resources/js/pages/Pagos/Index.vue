@@ -24,43 +24,45 @@ const props = defineProps<{ plan: any, pagos: any }>();
                     </Link>
                 </CardHeader>
 
-                <CardContent>
-                    <div v-if="pagos.data.length === 0" class="py-8 text-center text-muted-foreground">
-                        No hay pagos registrados.
-                    </div>
+        <CardContent>
+            <div v-if="pagos.data.length === 0" class="py-8 text-center text-muted-foreground">
+                No hay pagos registrados.
+            </div>
 
-                    <div v-else class="rounded-md border overflow-x-auto">
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="border-b bg-muted/50">
-                                    <th class="h-12 px-4 text-left font-medium">Cuota</th>
-                                    <th class="h-12 px-4 text-left font-medium">Fecha</th>
-                                    <th class="h-12 px-4 text-left font-medium">Método</th>
-                                    <th class="h-12 px-4 text-left font-medium">Monto</th>
-                                    <th class="h-12 px-4 text-left font-medium">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="p in pagos.data" :key="p.id" class="border-b">
-                                    <td class="px-4 py-2">{{ p.numerocuota }}</td>
-                                    <td class="px-4 py-2">{{ p.fechapago }}</td>
-                                    <td class="px-4 py-2">{{ p.metodopago }}</td>
-                                    <td class="px-4 py-2">{{ p.monto }}</td>
-                                    <td class="px-4 py-2">
-                                        <div class="flex gap-2">
-                                            <Link :href="`/pagos/${p.id}/edit`">
-                                                <Button size="sm" variant="outline">Editar</Button>
-                                            </Link>
-                                            <Button size="sm" variant="destructive" @click="$inertia.delete(`/pagos/${p.id}`)">Eliminar</Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </CardContent>
+            <div v-else class="rounded-md border overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="border-b bg-muted/50">
+                            <th class="h-12 px-4 text-left font-medium">Cuota</th>
+                            <th class="h-12 px-4 text-left font-medium">Fecha</th>
+                            <th class="h-12 px-4 text-left font-medium">Método</th>
+                            <th class="h-12 px-4 text-left font-medium">Monto</th>
+                            <th class="h-12 px-4 text-left font-medium">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="p in pagos.data" :key="p.id" class="border-b">
+                            <td class="px-4 py-2">{{ p.numerocuota }}</td>
+                            <td class="px-4 py-2">{{ p.fechapago }}</td>
+                            <td class="px-4 py-2">{{ p.metodopago }}</td>
+                            <td class="px-4 py-2">{{ p.monto }}</td>
+                            <td class="px-4 py-2">
+                                <div class="flex gap-2">
+                                    <Link :href="`/pagos/${p.id}`">
+                                        <Button size="sm" variant="secondary">Ver</Button>
+                                    </Link>
+                                    <Link :href="`/pagos/${p.id}/edit`">
+                                        <Button size="sm" variant="outline">Editar</Button>
+                                    </Link>
+                                    <Button size="sm" variant="destructive" @click="$inertia.delete(`/pagos/${p.id}`)">Eliminar</Button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </CardContent>
             </Card>
         </div>
     </AppLayout>
 </template>
-

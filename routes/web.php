@@ -126,6 +126,9 @@ Route::get('/plan-pagos/{planPago}/pagos/create', [PagoController::class, 'creat
 Route::post('/plan-pagos/{planPago}/pagos', [PagoController::class, 'store'])
     ->middleware(['auth', 'verified'])
     ->name('pagos.store');
+Route::get('/pagos/{pago}', [PagoController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('pagos.show');
 Route::get('/pagos/{pago}/edit', [PagoController::class, 'edit'])
     ->middleware(['auth', 'verified'])
     ->name('pagos.edit');
@@ -135,6 +138,35 @@ Route::put('/pagos/{pago}', [PagoController::class, 'update'])
 Route::delete('/pagos/{pago}', [PagoController::class, 'destroy'])
     ->middleware(['auth', 'verified'])
     ->name('pagos.destroy');
+
+// PagoFacil
+Route::get('/pagofacil/login', [PagoController::class, 'pagofacilLogin'])
+    ->middleware(['auth', 'verified'])
+    ->name('pagofacil.login');
+
+Route::get('/pagofacil/list-enabled-services', [PagoController::class, 'pagofacilListEnabledServices'])
+    ->middleware(['auth', 'verified'])
+    ->name('pagofacil.list');
+
+Route::post('/pagofacil/generate-qr', [PagoController::class, 'pagofacilGenerateQr'])
+    ->middleware(['auth', 'verified'])
+    ->name('pagofacil.generate');
+
+Route::post('/pagofacil/callback', [PagoController::class, 'pagofacilCallback'])
+    ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+    ->name('pagofacil.callback');
+
+Route::post('/webhooks/pagofacil', [PagoController::class, 'pagofacilCallback'])
+    ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+    ->name('pagofacil.callback.webhook');
+
+Route::get('/pagofacil/callback-url', [PagoController::class, 'pagofacilCallbackUrl'])
+    ->middleware(['auth', 'verified'])
+    ->name('pagofacil.callback-url');
+
+Route::post('/pagofacil/query-transaction', [PagoController::class, 'pagofacilQueryTransaction'])
+    ->middleware(['auth', 'verified'])
+    ->name('pagofacil.query');
 
 // Facturas
 Route::get('/pagos/{pago}/factura/create', [FacturaController::class, 'create'])

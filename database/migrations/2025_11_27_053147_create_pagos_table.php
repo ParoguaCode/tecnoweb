@@ -19,6 +19,11 @@ return new class extends Migration
             $table->float('monto');
             $table->integer('numerocuota');
             $table->string('referencia')->nullable();
+            $table->string('pf_transaction_id')->nullable();
+            $table->string('pf_payment_method_transaction_id')->nullable();
+            $table->integer('pf_status')->nullable();
+            $table->dateTime('pf_expiration_date')->nullable();
+            $table->longText('pf_qr_base64')->nullable();
             $table->foreignId('plan_pago_id')->constrained('plan_pagos');
             $table->softDeletes();
             $table->timestamps();

@@ -4,7 +4,7 @@ import { index as usuariosIndex, create, store } from '@/routes/usuarios';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type Rol } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
-import { computed, onUnmounted, ref, watch } from 'vue';
+import { onUnmounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

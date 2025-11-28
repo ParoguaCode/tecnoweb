@@ -19,12 +19,18 @@ class Pago extends Model
         'monto',
         'numerocuota',
         'referencia',
+        'pf_transaction_id',
+        'pf_payment_method_transaction_id',
+        'pf_status',
+        'pf_expiration_date',
+        'pf_qr_base64',
         'plan_pago_id',
     ];
 
     protected $casts = [
         'fechapago' => 'date',
         'monto' => 'float',
+        'pf_expiration_date' => 'datetime',
     ];
 
     public function planPago()

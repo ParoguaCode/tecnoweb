@@ -1,0 +1,90 @@
+' ======== PÁGINA PRINCIPAL: LISTAR ÓRDENES ========
+class "client page\nListar Órdenes" as Listar {
+  o Tabla de Ordenes
+  o btnNuevo: Button
+  o btnEditar: Button
+  o btnEliminar: Button
+  o btnVer: Button (abrir Show)
+  o Filtros (estado, cliente, búsqueda)
+}
+
+note right of Listar
+Operaciones:
+- Listar órdenes
+- Filtrar / buscar por cliente/estado
+- Acciones: ver, editar, eliminar
+end note
+
+' ======== PÁGINA: CREAR ORDEN ========
+class "client page\nCrear Orden" as Crear {
+  o Formulario:
+  o fechaInicio: Date
+  o fechaFin: Date (opcional)
+  o descripcion: Textarea
+  o cliente_id: Select
+  o usuario_id: Select
+  o motor_id: Select
+  o btnGuardar: Button
+  o btnCancelar: Button
+}
+
+' ======== PÁGINA: EDITAR ORDEN ========
+class "client page\nEditar Orden" as Editar {
+  e Formulario Precargado
+  e Campos similares a Crear
+  e btnActualizar
+  e btnCancelar
+}
+
+' ======== PÁGINA: SHOW/DETALLE (con carrito + servicios + incidencias) ========
+class "client page\nShow Orden" as Show {
+  o Detalle Orden (fechas, cliente, motor, estado)
+  o seccion Servicios (tabla pivot)
+  o boton "Agregar servicio" / Carrito local
+  o seccion Incidencias (lista + registrar)
+  o boton Generar Plan de Pago
+  o Muestra Total actual (orden.total)
+}
+
+' ======== VALIDACIONES ========
+class Validaciones <<note>> {
+  - Fecha inicio obligatoria
+  - Cliente / motor válidos
+  - Total descontinuo/consistente
+}
+
+' ======== MENÚS / NAVEGACIÓN ========
+class "navigation class\nDashboard" as Dashboard { o Menú Principal }
+class "Menú 'Órdenes'" as MenuOrdenes
+
+' ========= FLUJOS DE NAVEGACIÓN (FLECHAS) =========
+Listar --> Crear : btnNuevo (2)
+Crear --> Listar : btnGuardar (éxito)
+Crear --> Listar : btnCancelar
+
+Listar --> Editar : btnEditar (3)
+Editar --> Listar : btnActualizar (éxito)
+Editar --> Listar : btnCancelar
+
+Listar --> Show : btnVer (1)
+Show --> Listar : btnVolver
+
+' Show-specific actions
+Show --> Show : Agregar servicio (carrito local)
+Show --> Show : Guardar todos (POST /orden-trabajos/{id}/servicios)
+Show --> Show : Registrar incidencia (navega a crear)
+
+' Conexiones de validaciones a pantallas
+Validaciones .. Crear
+Validaciones .. Editar
+
+note right of Show
+  Rutas (ejemplos):
+  - GET  /orden-trabajos
+  - GET  /orden-trabajos/create
+  - POST /orden-trabajos
+  - GET  /orden-trabajos/{id}
+  - POST /orden-trabajos/{id}/servicios (batch)
+end note
+
+@enduml

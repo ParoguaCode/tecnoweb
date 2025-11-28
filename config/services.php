@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'pagofacil' => [
+        'base_url' => env('PAGOFACIL_API_URL'),
+        'token_service' => env('PAGOFACIL_TOKEN_SERVICE'),
+        'token_secret' => env('PAGOFACIL_TOKEN_SECRET'),
+        'callback_url' => env('PAGOFACIL_CALLBACK_URL'),
+    ],
+
 ];
