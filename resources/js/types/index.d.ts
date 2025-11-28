@@ -73,6 +73,7 @@ export interface Paginacion<T> {
 export interface Marca {
     id: number;
     nombre: string;
+    foto?: string;
     created_at: string;
     updated_at: string;
 }
@@ -80,6 +81,7 @@ export interface Marca {
 export interface Modelo {
     id: number;
     nombre: string;
+    foto?: string;
     created_at: string;
     updated_at: string;
 }
@@ -89,6 +91,7 @@ export interface Motor {
     numero_serie: string;
     anio: number;
     descripcion?: string;
+    foto?: string;
     marca_id: number;
     modelo_id: number;
     marca?: Marca;
@@ -101,6 +104,7 @@ export interface Cliente {
     id: number;
     nombre: string;
     telefono: string;
+    foto?: string;
     created_at: string;
     updated_at: string;
 }
@@ -117,11 +121,27 @@ export interface Usuario {
     id: number;
     name: string;
     email: string;
+    foto?: string;
     telefono?: number;
     direccion?: string;
     // tipo: string;
     rol_id: number;
     rol?: Rol;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Parte {
+    id: number;
+    nombre: string;
+    motor_id: number;
+    foto?: string;
+    motor?: {
+        id: number;
+        numero_serie: string;
+        marca?: { nombre: string };
+        modelo?: { nombre: string };
+    };
     created_at: string;
     updated_at: string;
 }

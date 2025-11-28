@@ -114,6 +114,9 @@ watch(
                                         ID
                                     </th>
                                     <th class="h-12 px-4 text-left align-middle font-medium">
+                                        Foto
+                                    </th>
+                                    <th class="h-12 px-4 text-left align-middle font-medium">
                                         Nombre
                                     </th>
                                     <th class="h-12 px-4 text-left align-middle font-medium">
@@ -138,6 +141,14 @@ watch(
                                 >
                                     <td class="p-4 align-middle">
                                         {{ usuario.id }}
+                                    </td>
+                                    <td class="p-4 align-middle">
+                                        <template v-if="usuario.foto">
+                                            <img :src="`/storage/${usuario.foto}`" alt="Foto" class="h-10 w-10 rounded-full object-cover border" />
+                                        </template>
+                                        <template v-else>
+                                            -
+                                        </template>
                                     </td>
                                     <td class="p-4 align-middle">
                                         {{ usuario.name }}

@@ -4,6 +4,7 @@ import { index as modelosIndex, edit, update } from '@/routes/modelos';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,7 @@ import InputError from '@/components/InputError.vue';
 interface Modelo {
     id: number;
     nombre: string;
+    foto?: string;
     created_at: string;
     updated_at: string;
 }
@@ -40,11 +42,49 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const form = useForm({
     nombre: props.modelo.nombre,
+    foto: null as File | null,
 });
 
 const submit = () => {
-    form.put(update(props.modelo.id).url);
+    form.transform((data) => ({
+        ...data,
+        _method: 'PUT',
+    }));
+    form.post(update(props.modelo.id).url, { forceFormData: true });
 };
+
+const onFotoChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0] || null;
+    form.foto = file;
+};
+
+const currentFotoUrl = computed(() =>
+    props.modelo.foto ? `/storage/${props.modelo.foto}` : null,
+);
+
+const newPreviewUrl = ref<string | null>(null);
+let previousObjectUrl: string | null = null;
+
+watch(
+    () => form.foto,
+    (file) => {
+        if (previousObjectUrl) {
+            URL.revokeObjectURL(previousObjectUrl);
+            previousObjectUrl = null;
+        }
+        if (typeof window !== 'undefined' && file instanceof File) {
+            previousObjectUrl = URL.createObjectURL(file);
+            newPreviewUrl.value = previousObjectUrl;
+        } else {
+            newPreviewUrl.value = null;
+        }
+    },
+);
+
+onUnmounted(() => {
+    if (previousObjectUrl) URL.revokeObjectURL(previousObjectUrl);
+});
 </script>
 
 <template>
@@ -73,6 +113,27 @@ const submit = () => {
                                 class="mt-1"
                             />
                             <InputError :message="form.errors.nombre" class="mt-2" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="foto">Foto (Opcional)</Label>
+                            <input
+                                id="foto"
+                                type="file"
+                                accept="image/*"
+                                @change="onFotoChange"
+                                :disabled="form.processing"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                            <InputError :message="form.errors.foto" class="mt-2" />
+                            <div class="mt-2 flex items-center gap-4">
+                                <div v-if="currentFotoUrl">
+                                    <img :src="currentFotoUrl!" alt="Actual" class="h-20 w-20 rounded-md object-cover border" />
+                                </div>
+                                <div v-if="newPreviewUrl">
+                                    <img :src="newPreviewUrl!" alt="Nueva" class="h-20 w-20 rounded-md object-cover border" />
+                                </div>
+                            </div>
                         </div>
 
                         <div class="flex items-center gap-4">

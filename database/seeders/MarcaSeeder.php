@@ -14,11 +14,11 @@ class MarcaSeeder extends Seeder
     public function run(): void
     {
         $marcas = [
-            ['nombre' => 'Toyota'],
-            ['nombre' => 'Honda'],
-            ['nombre' => 'Ford'],
-            ['nombre' => 'Chevrolet'],
-            ['nombre' => 'Nissan'],
+            ['nombre' => 'Toyota', 'foto' => null],
+            ['nombre' => 'Honda', 'foto' => null],
+            ['nombre' => 'Ford', 'foto' => null],
+            ['nombre' => 'Chevrolet', 'foto' => null],
+            ['nombre' => 'Nissan', 'foto' => null],
         ];
 
         foreach ($marcas as $marca) {

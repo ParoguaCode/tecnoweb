@@ -47,11 +47,17 @@ class UsuarioController extends Controller
             'password' => 'required|max:255|min:8',
             'telefono' => 'nullable|integer|digits_between:8,15',
             'direccion' => 'nullable|string|max:255',
+            'foto' => 'nullable|image|max:2048',
             // 'tipo' => 'required|string|max:50',
             'rol_id' => 'required|exists:roles,id',
         ]);
 
-        User::create($request->all());
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('usuarios', 'public');
+        }
+
+        User::create($data);
         return redirect()->route('usuarios.index')->with('success', 'Usuario ' . $request->name . ' creado');
     }
 
@@ -73,13 +79,18 @@ class UsuarioController extends Controller
             'password' => 'nullable|max:255|min:8',
             'telefono' => 'nullable|integer|digits_between:8,15',
             'direccion' => 'nullable|string|max:255',
+            'foto' => 'nullable|image|max:2048',
             // 'tipo' => 'required|string|max:50',
             'rol_id' => 'required|exists:roles,id',
         ]);
 
-        $data = $request->except('password');
+        $data = $request->except(['password', 'foto']);
         if ($request->filled('password')) {
             $data['password'] = $request->password;
+        }
+
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('usuarios', 'public');
         }
 
         $usuario->update($data);

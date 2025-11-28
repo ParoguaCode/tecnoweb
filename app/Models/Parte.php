@@ -9,6 +9,7 @@ class Parte extends Model
     protected $fillable = [
         'nombre',
         'motor_id',
+        'foto',
     ];
 
     public function motor()

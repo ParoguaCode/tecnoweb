@@ -11,6 +11,7 @@ import { Plus, Pencil, Trash2 } from 'lucide-vue-next';
 interface Modelo {
     id: number;
     nombre: string;
+    foto?: string;
     created_at: string;
     updated_at: string;
 }
@@ -71,6 +72,9 @@ const deleteModelo = (modelo: Modelo) => {
                                         ID
                                     </th>
                                     <th class="h-12 px-4 text-left align-middle font-medium">
+                                        Foto
+                                    </th>
+                                    <th class="h-12 px-4 text-left align-middle font-medium">
                                         Nombre
                                     </th>
                                     <th class="h-12 px-4 text-right align-middle font-medium">
@@ -86,6 +90,14 @@ const deleteModelo = (modelo: Modelo) => {
                                 >
                                     <td class="p-4 align-middle">
                                         {{ modelo.id }}
+                                    </td>
+                                    <td class="p-4 align-middle">
+                                        <template v-if="modelo.foto">
+                                            <img :src="`/storage/${modelo.foto}`" alt="Foto" class="h-10 w-10 rounded-full object-cover border" />
+                                        </template>
+                                        <template v-else>
+                                            -
+                                        </template>
                                     </td>
                                     <td class="p-4 align-middle">
                                         {{ modelo.nombre }}

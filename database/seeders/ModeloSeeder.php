@@ -14,11 +14,11 @@ class ModeloSeeder extends Seeder
     public function run(): void
     {
         $modelos = [
-            ['nombre' => 'Corolla'],
-            ['nombre' => 'Civic'],
-            ['nombre' => 'F-150'],
-            ['nombre' => 'Silverado'],
-            ['nombre' => 'Altima'],
+            ['nombre' => 'Corolla', 'foto' => null],
+            ['nombre' => 'Civic', 'foto' => null],
+            ['nombre' => 'F-150', 'foto' => null],
+            ['nombre' => 'Silverado', 'foto' => null],
+            ['nombre' => 'Altima', 'foto' => null],
         ];
 
         foreach ($modelos as $modelo) {

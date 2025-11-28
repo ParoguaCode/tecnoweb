@@ -14,11 +14,11 @@ class ParteSeeder extends Seeder
     public function run(): void
     {
         $partes = [
-            ['nombre' => 'Pistón', 'motor_id' => 1],
-            ['nombre' => 'Biela', 'motor_id' => 1],
-            ['nombre' => 'Árbol de levas', 'motor_id' => 2],
-            ['nombre' => 'Válvula de escape', 'motor_id' => 3],
-            ['nombre' => 'Culata', 'motor_id' => 4],
+            ['nombre' => 'Pistón', 'motor_id' => 1, 'foto' => null],
+            ['nombre' => 'Biela', 'motor_id' => 1, 'foto' => null],
+            ['nombre' => 'Árbol de levas', 'motor_id' => 2, 'foto' => null],
+            ['nombre' => 'Válvula de escape', 'motor_id' => 3, 'foto' => null],
+            ['nombre' => 'Culata', 'motor_id' => 4, 'foto' => null],
         ];
 
         foreach ($partes as $parte) {
