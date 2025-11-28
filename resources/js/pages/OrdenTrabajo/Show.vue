@@ -12,6 +12,7 @@ import type { BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 
 import { Button } from '@/components/ui/button';
+import Combobox from '@/components/ui/combobox/Combobox.vue';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Plus, AlertTriangle, ArrowLeft, Pencil, Trash2 } from 'lucide-vue-next';
 import { computed, watch, ref } from 'vue';
@@ -71,6 +72,12 @@ const props = defineProps<{
     serviciosCatalogo: ServicioCatalogo[];
 }>();
 
+const serviciosItems = computed<{ id: number; label: string }[]>(() =>
+    Array.isArray(props.serviciosCatalogo)
+        ? props.serviciosCatalogo.map(s => ({ id: s.id, label: `${s.nombre} (${s.costo} Bs)` }))
+        : []
+);
+
 // ==============================
 //   Breadcrumbs
 // ==============================
@@ -93,7 +100,8 @@ const formServicio = useForm({
 // carrito local: items que se agregarán en lote
 const carrito = ref<Array<{servicio_id:number, nombre:string, cantidad:number, precio:number, subtotal:number}>>([]);
 
-const formBatch = useForm({ servicios: [] });
+type ServicioBatch = { servicio_id: number; cantidad: number; precio: number };
+const formBatch = useForm<{ servicios: ServicioBatch[] }>({ servicios: [] });
 
 // cuando seleccionas un servicio, sugerimos el costo
 // When selection changes: update suggested cost
@@ -101,7 +109,9 @@ const formBatch = useForm({ servicios: [] });
 watch(
     () => formServicio.servicio_id,
     (id) => {
-        const serv = props.serviciosCatalogo.find(s => s.id === Number(id));
+        const serv = Array.isArray(props.serviciosCatalogo)
+            ? props.serviciosCatalogo.find(s => s.id === Number(id))
+            : undefined;
         if (serv) {
             formServicio.precio = serv.costo.toString();
             formServicio.costo_sugerido = serv.costo;
@@ -127,7 +137,9 @@ const agregarAlCarrito = () => {
     if (!formServicio.servicio_id) return alert('Seleccione un servicio');
     if (!formServicio.cantidad || Number(formServicio.cantidad) < 1) return alert('Cantidad inválida');
 
-    const serv = props.serviciosCatalogo.find(s => s.id === Number(formServicio.servicio_id));
+    const serv = Array.isArray(props.serviciosCatalogo)
+        ? props.serviciosCatalogo.find(s => s.id === Number(formServicio.servicio_id))
+        : undefined;
     const nombre = serv ? serv.nombre : 'Servicio desconocido';
 
     const cantidad = Number(formServicio.cantidad) || 1;
@@ -302,20 +314,11 @@ const confirmDelete = (id: number) => {
                             <!-- Servicio -->
                             <div class="md:col-span-2 flex flex-col gap-1">
                                 <label class="text-sm font-medium">Servicio</label>
-                                <select
+                                <Combobox
                                     v-model="formServicio.servicio_id"
-                                    class="border rounded p-2 text-sm"
-                                    :disabled="formServicio.processing"
-                                >
-                                    <option value="">Seleccione un servicio</option>
-                                    <option 
-                                        v-for="s in serviciosCatalogo" 
-                                        :key="s.id" 
-                                        :value="s.id"
-                                    >
-                                        {{ s.nombre }} ({{ s.costo }} Bs)
-                                    </option>
-                                </select>
+                                    :items="serviciosItems"
+                                    placeholder="Seleccione un servicio"
+                                />
                             </div>
 
                             <!-- Cantidad -->
@@ -474,3 +477,8 @@ const confirmDelete = (id: number) => {
         </div>
     </AppLayout>
 </template>
+const serviciosItems = computed(() =>
+    Array.isArray(props.serviciosCatalogo)
+        ? props.serviciosCatalogo.map(s => ({ id: s.id, label: `${s.nombre} (${s.costo} Bs)` }))
+        : []
+);

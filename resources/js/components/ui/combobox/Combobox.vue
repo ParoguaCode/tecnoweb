@@ -2,8 +2,9 @@
 import { ref, computed, watch } from "vue";
 import { Check, ChevronsUpDown, Search } from "lucide-vue-next";
 
+type Item = { id: number | string; label: string };
 const props = defineProps<{
-    items: Array<{ id: number | string; label: string }>;
+    items: Array<Item>;
     modelValue: number | string | null;
     placeholder?: string;
 }>()
@@ -13,10 +14,17 @@ const emit = defineEmits(["update:modelValue"]);
 const open = ref(false);
 const search = ref("");
 
-const filteredItems = computed(() => {
-    return props.items.filter(i =>
+const safeItems = computed<Item[]>(() => Array.isArray(props.items) ? props.items : []);
+
+const filteredItems = computed<Item[]>(() => {
+    return safeItems.value.filter((i: Item) =>
         i.label.toLowerCase().includes(search.value.toLowerCase())
     );
+});
+
+const selectedLabel = computed(() => {
+    const found = safeItems.value.find((i: Item) => i.id === props.modelValue);
+    return found?.label || props.placeholder || "Seleccionar...";
 });
 
 const selectItem = (id: number | string) => {
@@ -34,9 +42,7 @@ const selectItem = (id: number | string) => {
             class="w-full rounded-md border border-input bg-background text-foreground px-3 py-2 flex justify-between items-center outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
             @click="open = !open"
         >
-            <span class="text-left">
-                {{ props.items.find(i => i.id === props.modelValue)?.label || props.placeholder || "Seleccionar..." }}
-            </span>
+            <span class="text-left">{{ selectedLabel }}</span>
 
             <ChevronsUpDown class="h-4 w-4 opacity-50" />
         </button>
