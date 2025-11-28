@@ -1,25 +1,32 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { index as modelosIndex, create, destroy } from '@/routes/modelos';
-import { dashboard } from '@/routes';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
+import PaginationLinks from '@/components/global/PaginationLinks.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Pencil, Trash2 } from 'lucide-vue-next';
-
-interface Modelo {
-    id: number;
-    nombre: string;
-    created_at: string;
-    updated_at: string;
-}
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import Input from '@/components/ui/input/Input.vue';
+import { puede } from '@/helpers/validarPermiso';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { dashboard } from '@/routes';
+import { create, destroy, index as modelosIndex } from '@/routes/modelos';
+import { Modelo, Paginacion, type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { debounce } from 'lodash';
+import { Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
-    modelos: Modelo[];
+    modelos: Paginacion<Modelo>;
+    terminosBusqueda?: string;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const modelos = computed(() => props.modelos.data);
+const metadatos = computed(() => props.modelos);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,6 +44,16 @@ const deleteModelo = (modelo: Modelo) => {
         router.delete(destroy(modelo.id).url);
     }
 };
+
+const buscar = ref(props.terminosBusqueda);
+watch(
+    buscar,
+    debounce(
+        (query) =>
+            router.get('/modelos', { busqueda: query }, { preserveState: true }),
+        500,
+    ),
+);
 </script>
 
 <template>
@@ -51,36 +68,61 @@ const deleteModelo = (modelo: Modelo) => {
                         <CardDescription>
                             Administre los modelos de vehículos
                         </CardDescription>
+                        <br>
+                        <div class="flex w-full space-x-2">
+                            <Search />
+                            <Input
+                                ref="inputRef"
+                                type="search"
+                                class="max-w-sm"
+                                placeholder="Buscar..."
+                                v-model="buscar"
+                            />
+                        </div>
                     </div>
-                    <Link :href="create().url">
-                        <Button>
-                            <Plus class="mr-2 h-4 w-4" />
-                            Nuevo Modelo
-                        </Button>
-                    </Link>
+                    <div>
+                        
+                    </div>
+                    <div v-if="puede('modelo.crear')">
+                        <Link :href="create().url">
+                            <Button>
+                                <Plus class="mr-2 h-4 w-4" />
+                                Nuevo Modelo
+                            </Button>
+                        </Link>
+                    </div>
                 </CardHeader>
                 <CardContent>
-                    <div v-if="modelos.length === 0" class="py-8 text-center text-muted-foreground">
+                    <div
+                        v-if="metadatos.data.length === 0"
+                        class="py-8 text-center text-muted-foreground"
+                    >
                         No hay modelos registrados
                     </div>
                     <div v-else class="rounded-md border">
                         <table class="w-full">
                             <thead>
                                 <tr class="border-b bg-muted/50">
-                                    <th class="h-12 px-4 text-left align-middle font-medium">
+                                    <th
+                                        class="h-12 px-4 text-left align-middle font-medium"
+                                    >
                                         ID
                                     </th>
-                                    <th class="h-12 px-4 text-left align-middle font-medium">
+                                    <th
+                                        class="h-12 px-4 text-left align-middle font-medium"
+                                    >
                                         Nombre
                                     </th>
-                                    <th class="h-12 px-4 text-right align-middle font-medium">
+                                    <th v-if="puede('modelo.editar')"
+                                        class="h-12 px-4 text-right align-middle font-medium"
+                                    >
                                         Acciones
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr 
-                                    v-for="modelo in modelos" 
+                                <tr
+                                    v-for="modelo in modelos"
                                     :key="modelo.id"
                                     class="border-b transition-colors hover:bg-muted/50"
                                 >
@@ -90,20 +132,29 @@ const deleteModelo = (modelo: Modelo) => {
                                     <td class="p-4 align-middle">
                                         {{ modelo.nombre }}
                                     </td>
-                                    <td class="p-4 align-middle text-right">
+                                    <td v-if="puede('modelo.editar')" class="p-4 text-right align-middle">
                                         <div class="flex justify-end gap-2">
-                                            <Link :href="`/modelos/${modelo.id}/edit`">
-                                                <Button variant="outline" size="sm">
+                                            <Link
+                                                :href="`/modelos/${modelo.id}/edit`"
+                                            >
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                >
                                                     <Pencil class="h-4 w-4" />
                                                 </Button>
                                             </Link>
-                                            <Button 
-                                                variant="destructive" 
-                                                size="sm"
-                                                @click="deleteModelo(modelo)"
-                                            >
-                                                <Trash2 class="h-4 w-4" />
-                                            </Button>
+                                            <div v-if="puede('modelo.eliminar')">
+                                                <Button
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    @click="deleteModelo(modelo)"
+                                                >
+                                                    <Trash2 class="h-4 w-4" />
+                                                </Button>
+                                                
+                                            </div>
+
                                         </div>
                                     </td>
                                 </tr>
@@ -112,6 +163,7 @@ const deleteModelo = (modelo: Modelo) => {
                     </div>
                 </CardContent>
             </Card>
+            <PaginationLinks :paginator="metadatos" />
         </div>
     </AppLayout>
 </template>
