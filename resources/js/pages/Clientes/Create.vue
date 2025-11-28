@@ -70,7 +70,7 @@ const submit = () => {
                             <Input
                                 id="telefono"
                                 v-model="form.telefono"
-                                type="text"
+                                type="number"
                                 placeholder="Ej: 72345678"
                                 required
                                 :disabled="form.processing"

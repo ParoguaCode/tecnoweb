@@ -43,7 +43,7 @@ class MarcaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255|unique:marcas,nombre',
         ]);
 
         Marca::create($data);
@@ -63,7 +63,7 @@ class MarcaController extends Controller
     public function update(Request $request, Marca $marca)
     {
         $data = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255|unique:marcas,nombre,' . $marca->id,
         ]);
 
         $marca->update($data);

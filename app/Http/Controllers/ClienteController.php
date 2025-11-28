@@ -42,7 +42,7 @@ class ClienteController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255|unique:clientes,nombre',
             'telefono' => 'required|string|max:20',
         ]);
 
@@ -63,7 +63,7 @@ class ClienteController extends Controller
     public function update(Request $request, Cliente $cliente)
     {
         $data = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255|unique:clientes,nombre,' . $cliente->id,
             'telefono' => 'required|string|max:20',
         ]);
 

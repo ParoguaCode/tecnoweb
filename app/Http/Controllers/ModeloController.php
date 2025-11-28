@@ -41,7 +41,7 @@ class ModeloController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255|unique:modelos,nombre',
         ]);
 
         Modelo::create($data);
@@ -61,7 +61,7 @@ class ModeloController extends Controller
     public function update(Request $request, Modelo $modelo)
     {
         $data = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255|unique:modelos,nombre,' . $modelo->id,
         ]);
 
         $modelo->update($data);
