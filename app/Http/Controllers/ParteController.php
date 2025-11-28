@@ -46,10 +46,16 @@ class ParteController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
             'motor_id' => 'required|exists:motores,id',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('partes', 'public');
+        }
 
         Parte::create($data);
 
@@ -70,10 +76,16 @@ class ParteController extends Controller
 
     public function update(Request $request, Parte $parte)
     {
-        $data = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
             'motor_id' => 'required|exists:motores,id',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('partes', 'public');
+        }
 
         $parte->update($data);
 

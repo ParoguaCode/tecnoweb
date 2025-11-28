@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'email' => 'propietario@example.com',
             'password' => bcrypt('00000000'),
             'rol_id' => 1,
+            'foto' => null,
         ];
 
         User::firstOrCreate(['email' => $usuario1['email']], $usuario1);

@@ -52,13 +52,19 @@ class MotorController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'numero_serie' => 'required|string|max:255|unique:motores,numero_serie',
             'anio' => 'required|integer|min:1900|max:' . (date('Y') + 1),
             'descripcion' => 'nullable|string|max:500',
             'marca_id' => 'required|exists:marcas,id',
             'modelo_id' => 'required|exists:modelos,id',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('motores', 'public');
+        }
 
         Motor::create($data);
 
@@ -80,13 +86,19 @@ class MotorController extends Controller
 
     public function update(Request $request, Motor $motor)
     {
-        $data = $request->validate([
+        $request->validate([
             'numero_serie' => 'required|string|max:255|unique:motores,numero_serie,' . $motor->id,
             'anio' => 'required|integer|min:1900|max:' . (date('Y') + 1),
             'descripcion' => 'nullable|string|max:500',
             'marca_id' => 'required|exists:marcas,id',
             'modelo_id' => 'required|exists:modelos,id',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('motores', 'public');
+        }
 
         $motor->update($data);
 

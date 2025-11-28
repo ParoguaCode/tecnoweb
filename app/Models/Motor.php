@@ -15,6 +15,7 @@ class Motor extends Model
         'descripcion',
         'marca_id',
         'modelo_id',
+        'foto',
     ];
 
     public function marca()

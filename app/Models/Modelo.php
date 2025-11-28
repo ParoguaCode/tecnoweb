@@ -10,6 +10,7 @@ class Modelo extends Model
 
     protected $fillable = [
         'nombre',
+        'foto',
     ];
 
     public function motores()

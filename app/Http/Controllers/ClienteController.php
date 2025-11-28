@@ -41,10 +41,16 @@ class ClienteController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('clientes', 'public');
+        }
 
         Cliente::create($data);
 
@@ -62,10 +68,16 @@ class ClienteController extends Controller
 
     public function update(Request $request, Cliente $cliente)
     {
-        $data = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('clientes', 'public');
+        }
 
         $cliente->update($data);
 

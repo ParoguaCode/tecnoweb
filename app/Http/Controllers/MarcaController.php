@@ -42,9 +42,15 @@ class MarcaController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('marcas', 'public');
+        }
 
         Marca::create($data);
 
@@ -62,9 +68,15 @@ class MarcaController extends Controller
 
     public function update(Request $request, Marca $marca)
     {
-        $data = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        $data = $request->except('foto');
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('marcas', 'public');
+        }
 
         $marca->update($data);
 
