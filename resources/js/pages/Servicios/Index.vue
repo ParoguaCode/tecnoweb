@@ -1,12 +1,26 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
+import PaginationLinks from '@/components/global/PaginationLinks.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { Plus, Pencil, Trash2 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
+import { computed } from 'vue';
 
-defineProps({
-    servicios: Object, // paginado
-});
+const props = defineProps<{
+    servicios: {
+        data: Array<{ id: number; nombre: string; costo: number }>;
+        total: number;
+        current_page: number;
+        per_page: number;
+        last_page: number;
+        from: number;
+        to: number;
+        links: Array<{ url: string | null; label: string; active: boolean }>;
+    };
+}>();
+
+const listaServicios = computed(() => props.servicios.data);
+const paginator = computed(() => props.servicios);
 </script>
 
 <template>
@@ -25,7 +39,6 @@ defineProps({
                 </Button>
             </div>
 
-            <!-- Tabla -->
             <div class="border rounded-lg overflow-hidden">
                 <table class="w-full text-left">
                     <thead class="bg-gray-100">
@@ -37,7 +50,7 @@ defineProps({
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="s in servicios.data" :key="s.id" class="border-b">
+                        <tr v-for="s in listaServicios" :key="s.id" class="border-b">
                             <td class="p-2">{{ s.id }}</td>
                             <td class="p-2">{{ s.nombre }}</td>
                             <td class="p-2">{{ s.costo }} Bs</td>
@@ -64,6 +77,8 @@ defineProps({
                     </tbody>
                 </table>
             </div>
+
+            <PaginationLinks :paginator="paginator" />
 
         </div>
     </AppLayout>

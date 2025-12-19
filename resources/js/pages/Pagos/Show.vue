@@ -100,6 +100,10 @@ const statusLabel = computed(() => {
   return typeof s !== 'undefined' ? String(s) : '';
 });
 
+const descargarPdf = () => {
+  window.print();
+};
+
 onMounted(() => {
   consultarTransaccion();
 });
@@ -159,6 +163,7 @@ onMounted(() => {
           <div class="mt-6 flex gap-3">
             <Button type="button" variant="default" @click="consultarTransaccion">Consultar estado</Button>
             <Button type="button" variant="secondary" @click="obtenerTokenPagoFacil">{{ pfToken ? 'Renovar Token' : 'Obtener Token' }}</Button>
+            <Button type="button" variant="outline" @click="descargarPdf">Descargar PDF</Button>
           </div>
 
           <div v-if="pfError" class="mt-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800">{{ pfError }}</div>
